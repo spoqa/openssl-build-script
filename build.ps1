@@ -58,11 +58,6 @@ $OPENSSL_DIRECTORY    = Join-Path $PACKAGES_DIRECTORY "openssl-$OPENSSL_VERSION"
 $OPENSSL_PACKAGE_FILE = "openssl-$OPENSSL_VERSION.tar.gz"
 $OPENSSL_DOWNLOAD_URL = "https://www.openssl.org/source/$OPENSSL_PACKAGE_FILE"
 
-# Nuget configuration section
-$NUGET_FILE         = "nuget.exe"
-$NUGET_TOOL         = Join-Path $PACKAGES_DIRECTORY $NUGET_FILE
-$NUGET_DOWNLOAD_URL = "https://nuget.org/$NUGET_FILE"
-
 function Download-File {
     param (
         [string]$url,
@@ -152,12 +147,6 @@ if (!(Test-Path (Join-Path $PACKAGES_DIRECTORY $PERL_PACKAGE_FILE))) {
 if (!(Test-Path (Join-Path $PACKAGES_DIRECTORY $OPENSSL_PACKAGE_FILE))) {
     Write-Host "Downloading $OPENSSL_PACKAGE_FILE"
     Download-File $OPENSSL_DOWNLOAD_URL (Join-Path $PACKAGES_DIRECTORY $OPENSSL_PACKAGE_FILE)
-}
-
-# Download Nuget
-if (!(Test-Path $NUGET_TOOL)) {
-    Write-Host "Downloading $NUGET_FILE"
-    Download-File $NUGET_DOWNLOAD_URL $NUGET_TOOL
 }
 
 # Unpack 7zip
@@ -282,11 +271,3 @@ else {
     Write-Error "Unknown platform: $platform"
     Exit
 }
-
-# Package with NuGet
-
-copy hadouken.openssl.nuspec $OUTPUT_DIRECTORY
-
-pushd $OUTPUT_DIRECTORY
-Start-Process "$NUGET_TOOL" -ArgumentList "pack hadouken.openssl.nuspec -Properties version=$VERSION" -Wait -NoNewWindow
-popd
